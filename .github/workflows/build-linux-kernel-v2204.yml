@@ -102,7 +102,7 @@ jobs:
           #make bindeb-pkg -j$(nproc)
           #cd ..
           #cp *.deb /workdir
-          echo "::set-output name=status::success"
+          echo "status=success" >> $GITHUB_OUTPUT
 
       - name: start frpc
         if: failure()
@@ -113,16 +113,11 @@ jobs:
           host_key: ${{ secrets.HOST_KEY }}
           config: ${{ secrets.FRPC_SERVER_CONF }}
 
-      - name: Upload image to Release
-        uses: ncipollo/release-action@main
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
-          tag: Linux_Kernel_${{ env.COMPILE_STARTINGTIME }}
-          artifacts: /workdir/*
-          allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
-          body: |
-            This is Linux Kernel ${{ env.LINUX_GITURL }}
-            git_branch: ${{ github.event.inputs.set_git_branch }}
-            kernel_patch_version: ${{ github.event.inputs.set_kernel_patch_version }}
-            kernel_localversion: ${{ github.event.inputs.set_kernel_localversion }}
+          name: Linux_Kernel_${{ env.COMPILE_STARTINGTIME }}
+          path: /workdir/*
+          if-no-files-found: error
+          retention-days: 7
