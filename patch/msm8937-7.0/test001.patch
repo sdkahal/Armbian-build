@@ -38,17 +38,7 @@ index d4306fa..8cc96d4 100644
  			wcn36xx_smd_exit_imps(wcn);
  	}
  
-@@ -632,6 +629,9 @@ static int wcn36xx_hw_scan(struct ieee80211_hw *hw,
- {
- 	struct wcn36xx *wcn = hw->priv;
- 
-+	if (1)
-+		return 1;
-+
- 	if (!wcn36xx_firmware_get_feat_caps(wcn->fw_feat_caps, SCAN_OFFLOAD)) {
- 		/* fallback to mac80211 software scan */
- 		return 1;
-@@ -896,8 +896,11 @@ static void wcn36xx_bss_info_changed(struct ieee80211_hw *hw,
+@@ -896,8 +893,11 @@ static void wcn36xx_bss_info_changed(struct ieee80211_hw *hw,
  			 * place where AID is available.
  			 */
  			wcn36xx_smd_config_sta(wcn, vif, sta);
@@ -60,36 +50,22 @@ index d4306fa..8cc96d4 100644
  			wcn36xx_enable_keep_alive_null_packet(wcn, vif);
  		} else {
  			wcn36xx_dbg(WCN36XX_DBG_MAC,
-@@ -1102,19 +1105,7 @@ static int wcn36xx_suspend(struct ieee80211_hw *hw, struct cfg80211_wowlan *wow)
- 
- 	vif = wcn36xx_get_first_assoc_vif(wcn);
- 	if (vif) {
--		ret = wcn36xx_smd_arp_offload(wcn, vif, true);
--		if (ret)
--			goto out;
--		ret = wcn36xx_smd_ipv6_ns_offload(wcn, vif, true);
+@@ -1106,9 +1106,6 @@ static int wcn36xx_suspend(struct ieee80211_hw *hw, struct cfg80211_wowlan *wow)
+ 		if (ret)
+ 			goto out;
+ 		ret = wcn36xx_smd_ipv6_ns_offload(wcn, vif, true);
 -		if (ret)
 -			goto out;
 -		ret = wcn36xx_smd_gtk_offload(wcn, vif, true);
--		if (ret)
--			goto out;
--		ret = wcn36xx_smd_set_power_params(wcn, true);
--		if (ret)
--			goto out;
--		ret = wcn36xx_smd_wlan_host_suspend_ind(wcn);
-+		ret = 0;
- 	}
- 
- 	/* Disable IRQ, we don't want to handle any packet before mac80211 is
-@@ -1138,11 +1129,6 @@ static int wcn36xx_resume(struct ieee80211_hw *hw)
- 	mutex_lock(&wcn->conf_mutex);
- 	vif = wcn36xx_get_first_assoc_vif(wcn);
+ 		if (ret)
+ 			goto out;
+ 		ret = wcn36xx_smd_set_power_params(wcn, true);
+@@ -1140,8 +1137,6 @@ static int wcn36xx_resume(struct ieee80211_hw *hw)
  	if (vif) {
--		wcn36xx_smd_host_resume(wcn);
--		wcn36xx_smd_set_power_params(wcn, false);
+ 		wcn36xx_smd_host_resume(wcn);
+ 		wcn36xx_smd_set_power_params(wcn, false);
 -		wcn36xx_smd_gtk_offload_get_info(wcn, vif);
 -		wcn36xx_smd_gtk_offload(wcn, vif, false);
--		wcn36xx_smd_ipv6_ns_offload(wcn, vif, false);
+ 		wcn36xx_smd_ipv6_ns_offload(wcn, vif, false);
  		wcn36xx_smd_arp_offload(wcn, vif, false);
  	}
- 
