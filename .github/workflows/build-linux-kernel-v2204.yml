@@ -12,11 +12,11 @@ on:
       set_git_branch:
         description: "branch"
         required: true
-        default: "msm89x7/6.19.5"
+        default: "msm89x7/7.0.2"
       set_kernel_patch_version:
         description: "kernel_patch_version"
         required: true
-        default: "msm8937-6.19"
+        default: "msm8937-7.0"
       set_kernel_localversion:
         description: "kernel_localversion"
         required: true
