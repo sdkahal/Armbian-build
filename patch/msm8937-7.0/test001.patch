@@ -18,57 +18,6 @@ index d4306fa..8cc96d4 100644
  		.ampdu_density = IEEE80211_HT_MPDU_DENSITY_16,
  		.mcs = {
  			.rx_mask = { 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-@@ -309,6 +306,8 @@ static void wcn36xx_change_ps(struct wcn36xx *wcn, bool enable)
- 	struct ieee80211_vif *vif = NULL;
- 	struct wcn36xx_vif *tmp;
- 
-+	return;
-+
- 	list_for_each_entry(tmp, &wcn->vif_list, list) {
- 		vif = wcn36xx_priv_to_vif(tmp);
- 		if (enable && !wcn->sw_scan) {
-@@ -414,9 +413,7 @@ static int wcn36xx_config(struct ieee80211_hw *hw, int radio_idx, u32 changed)
- 		wcn36xx_change_ps(wcn, hw->conf.flags & IEEE80211_CONF_PS);
- 
- 	if (changed & IEEE80211_CONF_CHANGE_IDLE) {
--		if (hw->conf.flags & IEEE80211_CONF_IDLE)
--			wcn36xx_smd_enter_imps(wcn);
--		else
-+		if (!(hw->conf.flags & IEEE80211_CONF_IDLE))
- 			wcn36xx_smd_exit_imps(wcn);
- 	}
- 
-@@ -896,8 +893,11 @@ static void wcn36xx_bss_info_changed(struct ieee80211_hw *hw,
- 			 * place where AID is available.
- 			 */
- 			wcn36xx_smd_config_sta(wcn, vif, sta);
-+			/* Disable beacon filter for stability */
-+			/*
- 			if (vif->type == NL80211_IFTYPE_STATION)
- 				wcn36xx_smd_add_beacon_filter(wcn, vif);
-+			*/
- 			wcn36xx_enable_keep_alive_null_packet(wcn, vif);
- 		} else {
- 			wcn36xx_dbg(WCN36XX_DBG_MAC,
-@@ -1106,9 +1106,6 @@ static int wcn36xx_suspend(struct ieee80211_hw *hw, struct cfg80211_wowlan *wow)
- 		if (ret)
- 			goto out;
- 		ret = wcn36xx_smd_ipv6_ns_offload(wcn, vif, true);
--		if (ret)
--			goto out;
--		ret = wcn36xx_smd_gtk_offload(wcn, vif, true);
- 		if (ret)
- 			goto out;
- 		ret = wcn36xx_smd_set_power_params(wcn, true);
-@@ -1140,8 +1137,6 @@ static int wcn36xx_resume(struct ieee80211_hw *hw)
- 	if (vif) {
- 		wcn36xx_smd_host_resume(wcn);
- 		wcn36xx_smd_set_power_params(wcn, false);
--		wcn36xx_smd_gtk_offload_get_info(wcn, vif);
--		wcn36xx_smd_gtk_offload(wcn, vif, false);
- 		wcn36xx_smd_ipv6_ns_offload(wcn, vif, false);
- 		wcn36xx_smd_arp_offload(wcn, vif, false);
- 	}
 
 diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
 index ff10c63..2e15a34 100644
