@@ -2,22 +2,13 @@ diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/
 index d4306fa..8cc96d4 100644
 --- a/drivers/net/wireless/ath/wcn36xx/main.c
 +++ b/drivers/net/wireless/ath/wcn36xx/main.c
-@@ -135,13 +135,10 @@ static struct ieee80211_supported_band wcn_band_2ghz = {
- 	.n_bitrates	= ARRAY_SIZE(wcn_2ghz_rates),
- 	.ht_cap		= {
- 		.cap =	IEEE80211_HT_CAP_GRN_FLD |
--			IEEE80211_HT_CAP_SGI_20 |
- 			IEEE80211_HT_CAP_DSSSCCK40 |
--			IEEE80211_HT_CAP_LSIG_TXOP_PROT |
--			IEEE80211_HT_CAP_SGI_40 |
--			IEEE80211_HT_CAP_SUP_WIDTH_20_40,
-+			IEEE80211_HT_CAP_LSIG_TXOP_PROT,
- 		.ht_supported = true,
--		.ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K,
-+		.ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K,
- 		.ampdu_density = IEEE80211_HT_MPDU_DENSITY_16,
- 		.mcs = {
- 			.rx_mask = { 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+@@ -620,6 +620,7 @@ static int wcn36xx_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
+ 		goto out;
+ 	}
+ 
++	vif_priv->encrypt_type = WCN36XX_HAL_ED_NONE;
+ out:
+ 	mutex_unlock(&wcn->conf_mutex);
 
 diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
 index ff10c63..2e15a34 100644
