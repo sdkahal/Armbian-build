@@ -69,3 +69,24 @@ index d4306fa..8cc96d4 100644
  		wcn36xx_smd_ipv6_ns_offload(wcn, vif, false);
  		wcn36xx_smd_arp_offload(wcn, vif, false);
  	}
+
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+index ff10c63..2e15a34 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.c
++++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+@@ -3323,8 +3323,13 @@ int wcn36xx_smd_rsp_process(struct rpmsg_device *rpdev,
+ 		wcn36xx_dbg(WCN36XX_DBG_HAL, "indication arrived\n");
+ 		break;
+ 	default:
+-		wcn36xx_err("SMD_EVENT (%d) not supported\n",
+-			      msg_header->msg_type);
++		if (msg_header->msg_type == 312) {
++        	wcn36xx_dbg(WCN36XX_DBG_HAL, "SMD_EVENT (312) not supported (ignored)\n");
++    	} else {
++        	wcn36xx_err("SMD_EVENT (%d) not supported\n", 
++					msg_header->msg_type);
++    	}
++    	break;
+ 	}
+ 
+ 	return 0;
