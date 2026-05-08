@@ -14,7 +14,7 @@ index d4306fa..8cc96d4 100644
 +			IEEE80211_HT_CAP_LSIG_TXOP_PROT,
  		.ht_supported = true,
 -		.ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K,
-+		.ampdu_factor = IEEE80211_HT_MAX_AMPDU_32K,
++		.ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K,
  		.ampdu_density = IEEE80211_HT_MPDU_DENSITY_16,
  		.mcs = {
  			.rx_mask = { 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
