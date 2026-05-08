@@ -24,6 +24,9 @@ on:
   #schedule:
     #- cron: "0 17 * * 0"
 
+permissions:
+  contents: write
+
 env:
   TZ: Asia/Shanghai
 
@@ -104,23 +107,14 @@ jobs:
           #cp *.deb /workdir
           echo "::set-output name=status::success"
 
-      - name: start frpc
-        if: failure()
-        uses: a520ass/frpc_action@main
-        with:
-          users: ${{ inputs.users || github.actor }}
-          authorized_keys: ${{ secrets.AUTHORIZED_KEYS }}
-          host_key: ${{ secrets.HOST_KEY }}
-          config: ${{ secrets.FRPC_SERVER_CONF }}
-
       - name: Upload image to Release
         uses: ncipollo/release-action@main
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
           tag: Linux_Kernel_${{ env.COMPILE_STARTINGTIME }}
-          artifacts: /workdir/*
+          artifacts: "/workdir/*"
           allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             This is Linux Kernel ${{ env.LINUX_GITURL }}
             git_branch: ${{ github.event.inputs.set_git_branch }}
